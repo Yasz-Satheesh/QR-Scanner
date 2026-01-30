@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - Scan & Display Data Instantly</title>
+    <meta name="description"
+        content="Modern QR code scanner that instantly displays scanned data on the same page with a beautiful, intuitive interface.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="8" fill="url(#gradient)" />
+                    <path d="M12 12H16V16H12V12Z" fill="white" />
+                    <path d="M12 24H16V28H12V24Z" fill="white" />
+                    <path d="M24 12H28V16H24V12Z" fill="white" />
+                    <path d="M24 24H28V28H24V24Z" fill="white" />
+                    <path d="M18 18H22V22H18V18Z" fill="white" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>QR Scanner</h1>
+            </div>
+            <p class="tagline">Scan. Display. Simple.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Scanner Section -->
+            <section class="scanner-section" id="scannerSection">
+                <div class="scanner-card">
+                    <div class="card-header">
+                        <h2>Scan QR Code</h2>
+                        <p>Choose your scanning method</p>
+                    </div>
+
+                    <!-- Mode Tabs -->
+                    <div class="mode-tabs">
+                        <button class="mode-tab active" data-mode="camera">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <rect x="2" y="5" width="16" height="12" rx="2" stroke="currentColor"
+                                    stroke-width="2" />
+                                <circle cx="10" cy="11" r="2.5" stroke="currentColor" stroke-width="2" />
+                                <path d="M6 5L7 3H13L14 5" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                            Camera Scan
+                        </button>
+                        <button class="mode-tab" data-mode="upload">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 14V6M10 6L7 9M10 6L13 9" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <path d="M3 14V16C3 17.1046 3.89543 18 5 18H15C16.1046 18 17 17.1046 17 16V14"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            Upload Image
+                        </button>
+                    </div>
+
+                    <!-- Camera Mode -->
+                    <div class="mode-content" id="cameraMode">
+                        <div class="video-container" id="videoContainer">
+                            <video id="qrVideo" autoplay playsinline></video>
+                            <div class="scan-overlay">
+                                <div class="scan-frame">
+                                    <div class="corner top-left"></div>
+                                    <div class="corner top-right"></div>
+                                    <div class="corner bottom-left"></div>
+                                    <div class="corner bottom-right"></div>
+                                    <div class="scan-line"></div>
+                                </div>
+                            </div>
+                            <canvas id="qrCanvas" hidden></canvas>
+                        </div>
+
+                        <div class="controls">
+                            <button id="startBtn" class="btn btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path
+                                        d="M10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2Z"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <path d="M8 7L13 10L8 13V7Z" fill="currentColor" />
+                                </svg>
+                                Start Scanner
+                            </button>
+                            <button id="stopBtn" class="btn btn-secondary" style="display: none;">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="6" y="6" width="8" height="8" fill="currentColor" />
+                                </svg>
+                                Stop Scanner
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Mode -->
+                    <div class="mode-content" id="uploadMode" style="display: none;">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" id="fileInput" accept="image/*" hidden>
+                            <div class="upload-icon">
+                                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                                    <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2"
+                                        opacity="0.3" />
+                                    <path d="M32 42V22M32 22L24 30M32 22L40 30" stroke="currentColor" stroke-width="3"
+                                        stroke-linecap="round" />
+                                    <path d="M20 42H44" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <h3>Drop QR Code Image Here</h3>
+                            <p>or click to browse files</p>
+                            <span class="file-types">Supports: PNG, JPG, WEBP (Max 10MB)</span>
+                        </div>
+
+                        <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                            <div class="image-preview-header">
+                                <span>Uploaded Image</span>
+                                <button id="removeImageBtn" class="btn-icon" title="Remove image">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="image-preview" id="imagePreview">
+                                <img id="uploadedImage" alt="Uploaded QR Code">
+                                <canvas id="uploadCanvas" hidden></canvas>
+                            </div>
+                            <button id="scanImageBtn" class="btn btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M3 3H7V7H3V3Z" fill="currentColor" />
+                                    <path d="M3 13H7V17H3V13Z" fill="currentColor" />
+                                    <path d="M13 3H17V7H13V3Z" fill="currentColor" />
+                                    <path d="M13 13H17V17H13V13Z" fill="currentColor" />
+                                    <rect x="9" y="9" width="2" height="2" fill="currentColor" />
+                                </svg>
+                                Scan This Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="status-message" id="statusMessage">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" />
+                            <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <span>Ready to scan</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="card-header">
+                        <h2>Scanned Data</h2>
+                        <button id="clearBtn" class="btn-icon" title="Clear and scan again">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="data-display" id="dataDisplay">
+                        <!-- Data will be inserted here -->
+                    </div>
+
+                    <div class="actions">
+                        <button id="copyBtn" class="btn btn-outline">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <rect x="6" y="6" width="10" height="10" rx="2" stroke="currentColor"
+                                    stroke-width="2" />
+                                <path
+                                    d="M12 6V4C12 2.89543 11.1046 2 10 2H4C2.89543 2 2 2.89543 2 4V10C2 11.1046 2.89543 12 4 12H6"
+                                    stroke="currentColor" stroke-width="2" />
+                            </svg>
+                            Copy Data
+                        </button>
+                        <button id="scanAgainBtn" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M2 9C2 5.13401 5.13401 2 9 2C12.866 2 16 5.13401 16 9C16 12.866 12.866 16 9 16"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M2 9L4 7M2 9L4 11" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            Scan Again
+                        </button>
+                        <button id="downloadBtn" class="btn btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download
+                        </button>
+                        <button id="shareBtn" class="btn btn-outline">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-card">
+                    <div class="card-header">
+                        <h3>Scan History</h3>
+                        <button id="clearHistoryBtn" class="btn-text">Clear All</button>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2" opacity="0.3" />
+                                <path d="M24 16V24L30 30" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    opacity="0.3" />
+                            </svg>
+                            <p>No scan history yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by QR Scanner Technology</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="M6 10L9 13L14 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
